@@ -110,6 +110,15 @@ public class CommonCliOptions {
   )
   private Integer jettyMaxThreads;
 
+  /**
+   *   The fully qualified class name of a Java class that extends ElementFindingPlugin. The class must be on the class path. Defaults to {@code null}.
+   */
+  @Parameter(
+      names = {"-findPlugin"},
+      description = "<String> : The fully qualified class name of a Java class that extends ElementFindingPlugin. The class must be on the class path."
+  )
+  private String findPlugin;
+
   public Boolean getVersion() {
     return version;
   }
@@ -149,5 +158,7 @@ public class CommonCliOptions {
   public Integer getJettyMaxThreads() {
     return jettyMaxThreads;
   }
+
+  public String getFindPlugin() { return findPlugin; }
 
 }

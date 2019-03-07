@@ -39,6 +39,9 @@ import org.openqa.selenium.json.Json;
 import org.openqa.selenium.remote.server.jmx.JMXHelper;
 import org.openqa.selenium.remote.server.jmx.ManagedService;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -57,6 +60,7 @@ public class SeleniumServer extends BaseServer implements GridNodeServer {
 
   private final StandaloneConfiguration configuration;
   private Map<String, Class<? extends Servlet>> extraServlets;
+  private ElementFindingPlugin findPlugin;
 
   private ObjectName objectName;
   private ActiveSessions allSessions;
@@ -104,6 +108,25 @@ public class SeleniumServer extends BaseServer implements GridNodeServer {
     }
   }
 
+  private void registerPlugins() {
+    if (configuration.findPlugin != null) {
+
+      try {
+        Class FindPlugin = Class.forName(configuration.findPlugin);
+        try {
+          findPlugin = (ElementFindingPlugin)FindPlugin.newInstance();
+        } catch (InstantiationException | IllegalAccessException err) {
+          LOG.warning(String.format("Error occurred when trying to register element finding plugin '%s'; plugin will not be active", configuration.findPlugin));
+        }
+        LOG.info(String.format("Found and registered the element finding plugin '%s'",
+                               configuration.findPlugin));
+
+      } catch (ClassNotFoundException err) {
+        LOG.warning(String.format("Requested to register element finding plugin, but could not find the class given (%s)", configuration.findPlugin));
+      }
+    }
+  }
+
   @Override
   public void setExtraServlets(Map<String, Class<? extends Servlet>> extraServlets) {
     this.extraServlets = extraServlets;
@@ -130,6 +153,7 @@ public class SeleniumServer extends BaseServer implements GridNodeServer {
 
     addRcSupport();
     addExtraServlets();
+    registerPlugins();
 
     start();
 

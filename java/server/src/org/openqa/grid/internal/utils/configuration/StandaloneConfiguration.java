@@ -121,6 +121,11 @@ public class StandaloneConfiguration {
   public Integer timeout;
 
   /**
+   * Class name of an element finding plugin. Defaults to {@code null}.
+   */
+  public String findPlugin;
+
+  /**
    * Creates a new configuration using the default values.
    */
   public StandaloneConfiguration() {
@@ -136,6 +141,7 @@ public class StandaloneConfiguration {
     this.timeout = jsonConfig.getTimeout();
     this.browserTimeout = jsonConfig.getBrowserTimeout();
     this.jettyMaxThreads = jsonConfig.getJettyMaxThreads();
+    this.findPlugin = jsonConfig.getFindPlugin();
   }
 
   public StandaloneConfiguration(StandaloneCliOptions cliConfig) {
@@ -152,6 +158,7 @@ public class StandaloneConfiguration {
     ofNullable(cliConfig.getTimeout()).ifPresent(v -> timeout = v);
     ofNullable(cliConfig.getBrowserTimeout()).ifPresent(v -> browserTimeout = v);
     ofNullable(cliConfig.getJettyMaxThreads()).ifPresent(v -> jettyMaxThreads = v);
+    ofNullable(cliConfig.getFindPlugin()).ifPresent(v -> findPlugin = v);
   }
 
   public static<T extends StandaloneConfiguration> T loadFromJson(String resource, Class<T> type) {
@@ -191,7 +198,7 @@ public class StandaloneConfiguration {
     if (isMergeAble(Integer.class, other.timeout, timeout)) {
       timeout = other.timeout;
     }
-    // role, host, port, log, debug, version, enablePassThrough, and help are not merged,
+    // role, host, port, log, debug, version, enablePassThrough, findPlugin, and help are not merged,
     // they are only consumed by the immediately running process and should never affect a remote
   }
 
@@ -243,6 +250,7 @@ public class StandaloneConfiguration {
     sb.append(toString(format, "port", port));
     sb.append(toString(format, "role", role));
     sb.append(toString(format, "timeout", timeout));
+    sb.append(toString(format, "findPlugin", findPlugin));
     return sb.toString();
   }
 
@@ -282,6 +290,7 @@ public class StandaloneConfiguration {
     json.put("port", port);
     json.put("role", role);
     json.put("timeout", timeout);
+    json.put("findPlugin", findPlugin);
 
     serializeFields(json);
 

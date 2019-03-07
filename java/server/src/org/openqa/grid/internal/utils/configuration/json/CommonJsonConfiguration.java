@@ -93,9 +93,10 @@ public abstract class CommonJsonConfiguration {
   private Integer timeout;
   private Integer browserTimeout;
   private Integer jettyMaxThreads;
-  
+  private String findPlugin;
+
   public CommonJsonConfiguration() {}
-  
+
   public CommonJsonConfiguration(CommonJsonConfiguration commonJsonConfig) {
 	  role = commonJsonConfig.role;
 	  debug = commonJsonConfig.debug;
@@ -105,6 +106,7 @@ public abstract class CommonJsonConfiguration {
 	  timeout = commonJsonConfig.timeout;
 	  browserTimeout = commonJsonConfig.browserTimeout;
 	  jettyMaxThreads = commonJsonConfig.jettyMaxThreads;
+	  findPlugin = commonJsonConfig.findPlugin;
   }
 
   protected String getRole() {
@@ -159,4 +161,9 @@ public abstract class CommonJsonConfiguration {
   public Integer getJettyMaxThreads() {
     return jettyMaxThreads;
   }
+
+  /**
+   * Class name of an element finding plugin. Defaults to {@code null}.
+   */
+  public String getFindPlugin() { return findPlugin; }
 }
