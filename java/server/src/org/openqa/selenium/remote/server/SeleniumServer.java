@@ -39,6 +39,8 @@ import org.openqa.selenium.json.Json;
 import org.openqa.selenium.remote.server.jmx.JMXHelper;
 import org.openqa.selenium.remote.server.jmx.ManagedService;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,8 +113,15 @@ public class SeleniumServer extends BaseServer implements GridNodeServer {
   private void registerPlugins() {
     if (configuration.findPlugin != null) {
 
+      final String[] parts = configuration.findPlugin.split(":");
+      final String jarPath = parts[0];
+      final String className = parts[1];
+
       try {
-        Class FindPlugin = Class.forName(configuration.findPlugin);
+        URL urls[] = {};
+        PluginClassLoader classLoader = new PluginClassLoader(urls);
+        classLoader.addFile(jarPath);
+        Class FindPlugin = classLoader.loadClass(className);
         try {
           findPlugin = (ElementFindingPlugin)FindPlugin.newInstance();
         } catch (InstantiationException | IllegalAccessException err) {
@@ -121,8 +130,9 @@ public class SeleniumServer extends BaseServer implements GridNodeServer {
         LOG.info(String.format("Found and registered the element finding plugin '%s'",
                                configuration.findPlugin));
 
-      } catch (ClassNotFoundException err) {
-        LOG.warning(String.format("Requested to register element finding plugin, but could not find the class given (%s)", configuration.findPlugin));
+      } catch (ClassNotFoundException | MalformedURLException err) {
+        err.printStackTrace();
+        LOG.warning(String.format("Requested to register element finding plugin, but could not find the class named '%s' using the path '%s'", className, jarPath));
       }
     }
   }

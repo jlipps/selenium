@@ -26,6 +26,7 @@ java_library(
         "DriverFactory.java",
         "DriverProvider.java",
         "ElementFindingPlugin.java",
+        "PluginClassLoader.java",
         "InputStreamWrappingServletInputStream.java",
         "JsonHttpCommandHandler.java",
         "RequiresAllSessions.java",
